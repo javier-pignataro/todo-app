@@ -4,7 +4,6 @@ window.addEventListener('load', function () {
       const email = document.querySelector("#inputEmail")
       const password = document.getElementById("inputPassword")
       const url = "https://todo-api.ctd.academy/v1"
-      // console.log(form);
 
       /* -------------------------------------------------------------------------- */
             /*            FUNCIÓN 1: Escuchamos el submit y preparamos el envío           */
@@ -13,7 +12,6 @@ window.addEventListener('load', function () {
 
             if( token = localStorage.getItem('jwt') ){
 
-                  console.log( token );
                   const settings = {
                         method: "GET",
                         headers: {
@@ -21,10 +19,15 @@ window.addEventListener('load', function () {
                               'authorization': token
                         }
                   }
-                  console.log( settings );
                   fetch(`${url}/users/getMe`, settings)
-                        .then(response => response.text())
-                        .then(text => console.log(text))
+                        .then(
+                              response => 
+                              {
+                                    if( response.ok ){
+                                          location.replace("./mis-tareas.html")
+                                    }
+                              }
+                        );
             }
 
 
@@ -38,7 +41,7 @@ window.addEventListener('load', function () {
             }
 
             // vemos el objeto que recibimos del formulario
-            console.log(payload);
+            // console.log(payload);
 
             //configuramos la request del Fetch
             const settings = {
@@ -62,13 +65,10 @@ window.addEventListener('load', function () {
             /*                     FUNCIÓN 2: Realizar el login [POST]                    */
             /* -------------------------------------------------------------------------- */
             function realizarLogin(settings) {
-                  // console.log(settings);
-                  console.log("Lanzar la consulta a la API...");
 
 
                   fetch(`${url}/users/login`, settings)
                         .then(response => {
-                              console.log(response);
 
                               // manejar el error de la request.
                                     //  if (response.ok) 
@@ -79,8 +79,6 @@ window.addEventListener('load', function () {
 
                         })
                         .then(data => {
-                              console.log("Promesa cumplida💍");
-                              console.log(data);
 
                               if (data.jwt) {
                                     // Guardamos el dato jwt en el local storage (este token de autenticación)
@@ -94,7 +92,6 @@ window.addEventListener('load', function () {
                         })
                         .catch(err => {
                               console.warn("Promesa rechazada ");
-                              console.log(err);
                               if (err.status == 400) {
                                     console.warn("Contraseña incorrecta")
                                     alert("Contraseña incorrecta")
