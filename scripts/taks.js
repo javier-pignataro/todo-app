@@ -11,9 +11,11 @@
             const btnCerrarSesion = document.getElementById( "closeApp" );
             const formCrearTarea = document.querySelector( ".nueva-tarea" );
             const userInfo = document.querySelector( ".user-info" );
+            const taskDescr = document.getElementById("nuevaTarea");
+            const htmlTaskList = document.querySelector( ".tareas-pendientes" );
             // Endpoints
             const urlGetCredentials = "https://todo-api.ctd.academy/v1/users/getMe"
-            const urlGetTasks = "https://todo-api.ctd.academy/v1/tasks"
+            const urlTasks = "https://todo-api.ctd.academy/v1/tasks"
             const token = localStorage.getItem( "jwt" );
             // Requests
             // get for tasks and getCredentials
@@ -39,6 +41,7 @@
             let completedTasks = [];
 
             // Run Time Instructions
+            // User name for headers
             obtenerNombreUsuario();
             consultarTareas();
 
@@ -89,7 +92,7 @@
                   /* -------------------------------------------------------------------------- */
 
                   function consultarTareas() {
-                        fetch( urlGetTasks, getReqWithAuth )
+                        fetch( urlTasks, getReqWithAuth )
                               .then(
                                     res =>
                                     {
@@ -102,7 +105,8 @@
                               .then(
                                     data =>
                                     {
-                                          console.log( data );
+                                          pendingTasks = data;
+                                          renderizarTareas( pendingTasks );
                                     }
                               )
                               .catch(
@@ -120,11 +124,42 @@
                   /* -------------------------------------------------------------------------- */
 
                   formCrearTarea.addEventListener('submit', function (event) {
+                        event.preventDefault()
 
+                        const body = {
+                              description: taskDescr.value,
+                              completed: false
+                        }
 
+                        createTaskPostReq.body = JSON.stringify( body );
 
-
-
+                        fetch( urlTasks, createTaskPostReq )
+                              .then(
+                                    res =>
+                                    {
+                                          if( !res.ok ){
+                                                return Promise.reject(respuesta);
+                                          }
+                                          return res.json();
+                                    }
+                              )
+                              .then(
+                                    data =>
+                                    {
+                                          // console.log( data );
+                                          pendingTasks.push( data );
+                                          console.log( "Array de tareas: -------------" );
+                                          console.log( pendingTasks );
+                                          renderizarTareas(pendingTasks);
+                                    }
+                              )
+                              .catch(
+                                    err =>
+                                    {
+                                          console.error( err );
+                                    }
+                              )
+                        ;
                   });
 
 
@@ -133,12 +168,21 @@
                   /* -------------------------------------------------------------------------- */
                   function renderizarTareas(listado) {
 
+                        // Reset List of tasks
+                        htmlTaskList.innerHTML = "";
 
-
-
-
-
-
+                        for( let task of listado ){
+                              taskListItem = `
+                                    <li class="tarea">
+                                          <button class="change" id="0${task.id}"><i class="fa-regular fa-circle"></i></button>
+                                          <div class="descripcion">
+                                                <p class="nombre">${task.description}</p>
+                                                <p class="timestamp">${task.createdAt}</p>
+                                          </div>
+                                    </li>
+                              `;
+                              htmlTaskList.innerHTML += taskListItem;
+                        }
                   };
 
             /* -------------------------------------------------------------------------- */
