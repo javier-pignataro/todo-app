@@ -25,9 +25,17 @@ window.addEventListener('load', function () {
                               {
                                     if( response.ok ){
                                           location.replace("./mis-tareas.html")
+                                    } else {
+                                          this.localStorage.clear();
                                     }
                               }
-                        );
+                        )
+                        .catch(
+                               () =>
+                               {
+                                     this.localStorage.clear();
+                               }
+                        )
             }
 
 
@@ -71,8 +79,11 @@ window.addEventListener('load', function () {
                         .then(response => {
 
                               // manejar el error de la request.
-                                    //  if (response.ok) 
+                              if (response.ok) 
                                     return response.json()
+                              return Promise.reject( response );
+
+
 
                               // si llego acá es por que la request no es la correcta y fuerzo el rechazo de la promesa del fetch
                               // return Promise.reject(response)

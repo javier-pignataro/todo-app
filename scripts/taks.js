@@ -43,6 +43,7 @@
             // Run Time Instructions
             // User name for headers
             obtenerNombreUsuario();
+            // Obtener ARRAY de tasks desde la API, y guardarlo en -> [ pendingTasks ]
             consultarTareas();
 
 
@@ -147,7 +148,7 @@
                                     data =>
                                     {
                                           // console.log( data );
-                                          pendingTasks.push( data );
+                                          pendingTasks.push( data ); // Push response task to pendingTasks [] ( array )
                                           console.log( "Array de tareas: -------------" );
                                           console.log( pendingTasks );
                                           renderizarTareas(pendingTasks);
